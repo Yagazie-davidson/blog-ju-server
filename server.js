@@ -109,3 +109,5 @@ app.delete("/api/post/delete/:title", (req, res) => {
 app.listen(7000, function () {
 	console.log("listening on 7000");
 });
+
+module.exports = app;
