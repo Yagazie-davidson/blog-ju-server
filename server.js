@@ -1,9 +1,10 @@
 const express = require("express");
+const PORT = 7000;
 const app = express();
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const MongoClient = require("mongodb").MongoClient;
-
+require("dotenv").config();
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -14,13 +15,12 @@ let db,
 	dbName = "dev";
 
 // talk to mongo DB
-MongoClient.connect(
-	"mongodb+srv://Letam:Examination@dev.iyanmtm.mongodb.net/?retryWrites=true&w=majority",
-	{ useUnifiedTopology: true }
-).then(client => {
-	console.log(`Connected to ${dbName} Database`);
-	db = client.db(dbName);
-});
+MongoClient.connect(dbConnectionStr, { useUnifiedTopology: true }).then(
+	client => {
+		console.log(`Connected to ${dbName} Database`);
+		db = client.db(dbName);
+	}
+);
 
 app.get("/", (req, res) => {
 	res.sendFile(__dirname + "/index.html");
@@ -109,6 +109,6 @@ app.delete("/api/post/delete/:title", (req, res) => {
 		.catch(error => console.error(error));
 });
 
-app.listen(7000, function () {
+app.listen(process.env.PORT || PORT, function () {
 	console.log("listening on 7000");
 });
