@@ -3,6 +3,7 @@ const app = express();
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const MongoClient = require("mongodb").MongoClient;
+
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -21,6 +22,10 @@ MongoClient.connect(
 	db = client.db(dbName);
 });
 
+app.get("/", (req, res) => {
+	res.sendFile(__dirname + "/index.html");
+});
+
 // Get all blog posts
 app.get("/api/post/all", function (req, res) {
 	db.collection("blog-post")
@@ -32,6 +37,7 @@ app.get("/api/post/all", function (req, res) {
 		.catch(error => console.error(error));
 });
 
+// Get blog post by title
 app.get("/api/blog/post/:title", function (req, res) {
 	db.collection("blog-post")
 		.find({ title: req.params.title })
@@ -61,7 +67,7 @@ app.post("/api/post/new", function (req, res) {
 	res.json({ status: 200, message: "Post successfully added" });
 });
 
-// edit
+// edit blog post body
 app.put("/api/post/edit", (req, res) => {
 	console.log(req.body);
 	db.collection("blog-post")
@@ -69,10 +75,7 @@ app.put("/api/post/edit", (req, res) => {
 			{ title: req.body.title },
 			{
 				$set: {
-					// title: req.body.title,
 					body: req.body.body,
-					// date: req.body.date,
-					// user: req.body.userName,
 				},
 			},
 			{
